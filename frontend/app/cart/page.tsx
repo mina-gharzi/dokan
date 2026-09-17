@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { getCart, updateCartItem, removeFromCart, Cart } from "@/lib/api";
+import { getCart, updateCartItem, removeFromCart, checkout, Cart } from "@/lib/api";
 
 export default function CartPage() {
   const { token, isLoading: authLoading } = useAuth();
+  const router = useRouter();
+
   const [cart, setCart] = useState<Cart | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -29,6 +35,21 @@ export default function CartPage() {
     if (!token) return;
     const updated = await removeFromCart(productId, token);
     setCart(updated);
+  }
+
+  async function handleCheckout() {
+    if (!token) return;
+    setIsCheckingOut(true);
+    setCheckoutError(null);
+
+    try {
+      const order = await checkout(token);
+      router.push(`/orders/${order.id}`);
+    } catch (err) {
+      setCheckoutError(err instanceof Error ? err.message : "Checkout failed");
+    } finally {
+      setIsCheckingOut(false);
+    }
   }
 
   if (authLoading || isLoading) {
@@ -78,6 +99,18 @@ export default function CartPage() {
       <div className="mt-6 text-right text-xl font-bold text-gray-900">
         Total: ${cart.total.toFixed(2)}
       </div>
+
+      {checkoutError && (
+        <p className="text-sm text-red-600 mt-2 text-right">{checkoutError}</p>
+      )}
+
+      <button
+        onClick={handleCheckout}
+        disabled={isCheckingOut}
+        className="mt-4 w-full bg-green-600 text-white rounded-md py-2 hover:bg-green-700 disabled:opacity-50"
+      >
+        {isCheckingOut ? "Placing order..." : "Checkout"}
+      </button>
     </main>
   );
 }
