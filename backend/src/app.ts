@@ -1,16 +1,23 @@
 import express, { Request, Response } from "express";
+import cors from "cors";
+import productRoutes from "./routes/product.routes";
 import authRoutes from "./routes/auth.routes";
 
 const app = express();
 
-// Middleware: بدنه‌ی JSON را می‌خواند و در req.body قابل دسترس می‌کند
+app.use(
+  cors({
+    origin: "http://localhost:3000", // فقط Frontend خودمان اجازه دارد
+  })
+);
+
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
-
-// یک Route ساده برای تست سلامت سرور
 app.get("/api/health", (req: Request, res: Response) => {
   res.status(200).json({ success: true, data: { status: "ok" } });
 });
+
+app.use("/api/products", productRoutes);
+app.use("/api/auth", authRoutes);
 
 export default app;
