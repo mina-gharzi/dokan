@@ -11,13 +11,10 @@ export const createProductSchema = z.object({
   stock: z.number().int().min(0, "Stock cannot be negative"),
   image: z.string().url("Image must be a valid URL").optional(),
   categoryId: z.string().uuid("categoryId must be a valid UUID"),
-  sellerId: z.string().uuid("sellerId must be a valid UUID"),
+  // sellerId عمداً اینجا نیست — از توکن (req.user.userId) می‌آید، نه از Body
 });
 
-export const updateProductSchema = createProductSchema
-  .omit({ sellerId: true })
-  .partial();
+export const updateProductSchema = createProductSchema.partial();
 
-// این تایپ‌ها را مستقیم از Schema استخراج می‌کنیم — دیگر لازم نیست دستی در types/product.types.ts بازنویسی‌شان کنیم
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;

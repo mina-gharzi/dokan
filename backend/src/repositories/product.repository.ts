@@ -1,6 +1,6 @@
 import { pool } from "../config/database";
-import { Product } from "../types/product.types";
-import { CreateProductInput, UpdateProductInput } from "../schemas/product.schema";
+import { Product, CreateProductRepositoryInput } from "../types/product.types";
+import { UpdateProductInput } from "../schemas/product.schema";
 // نگاشت یک Row خام از دیتابیس (snake_case) به شیء Product (camelCase)
 function mapRowToProduct(row: any): Product {
   return {
@@ -33,7 +33,7 @@ async function findBySlug(slug: string): Promise<Product | undefined> {
   return result.rows[0] ? mapRowToProduct(result.rows[0]) : undefined;
 }
 
-async function create(input: CreateProductInput): Promise<Product> {
+async function create(input: CreateProductRepositoryInput): Promise<Product> {
   const result = await pool.query(
     `INSERT INTO products (title, slug, description, price, stock, image, category_id, seller_id)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)

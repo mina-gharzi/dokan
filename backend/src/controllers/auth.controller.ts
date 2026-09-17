@@ -19,6 +19,10 @@ async function login(req: Request, res: Response) {
   }
 }
 
+function me(req: Request, res: Response) {
+  res.status(200).json({ success: true, data: { userId: req.user!.userId, role: req.user!.role } });
+}
+
 function handleError(err: unknown, res: Response) {
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
@@ -33,4 +37,4 @@ function handleError(err: unknown, res: Response) {
   });
 }
 
-export const authController = { register, login };
+export const authController = { register, login, me };

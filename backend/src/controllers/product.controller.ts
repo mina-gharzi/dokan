@@ -21,7 +21,7 @@ async function getOne(req: Request<ProductIdParams>, res: Response) {
 
 async function create(req: Request, res: Response) {
   try {
-    const product = await productService.createProduct(req.body);
+    const product = await productService.createProduct(req.body, req.user!.userId);
     res.status(201).json({ success: true, data: product });
   } catch (err) {
     handleError(err, res);
@@ -30,7 +30,7 @@ async function create(req: Request, res: Response) {
 
 async function update(req: Request<ProductIdParams>, res: Response) {
   try {
-    const product = await productService.updateProduct(req.params.id, req.body);
+    const product = await productService.updateProduct(req.params.id, req.body, req.user!);
     res.status(200).json({ success: true, data: product });
   } catch (err) {
     handleError(err, res);
@@ -39,7 +39,7 @@ async function update(req: Request<ProductIdParams>, res: Response) {
 
 async function remove(req: Request<ProductIdParams>, res: Response) {
   try {
-    await productService.deleteProduct(req.params.id);
+    await productService.deleteProduct(req.params.id, req.user!);
     res.status(204).send();
   } catch (err) {
     handleError(err, res);
