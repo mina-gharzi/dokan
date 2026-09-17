@@ -108,3 +108,73 @@ export async function createProduct(
 
   return json.data;
 }
+
+export interface CartItem {
+  id: string;
+  productId: string;
+  quantity: number;
+  productTitle: string;
+  productSlug: string;
+  productPrice: number;
+  productImage: string | null;
+  productStock: number;
+}
+
+export interface Cart {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  total: number;
+}
+
+export async function getCart(token: string): Promise<Cart> {
+  const res = await fetch(`${API_URL}/cart`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+
+  const json: ApiSuccessResponse<Cart> | ApiErrorResponse = await res.json();
+  if (!json.success) throw new Error(json.error.message);
+  return json.data;
+}
+
+export async function addToCart(productId: string, quantity: number, token: string): Promise<Cart> {
+  const res = await fetch(`${API_URL}/cart/items`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ productId, quantity }),
+  });
+
+  const json: ApiSuccessResponse<Cart> | ApiErrorResponse = await res.json();
+  if (!json.success) throw new Error(json.error.message);
+  return json.data;
+}
+
+export async function updateCartItem(productId: string, quantity: number, token: string): Promise<Cart> {
+  const res = await fetch(`${API_URL}/cart/items/${productId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ quantity }),
+  });
+
+  const json: ApiSuccessResponse<Cart> | ApiErrorResponse = await res.json();
+  if (!json.success) throw new Error(json.error.message);
+  return json.data;
+}
+
+export async function removeFromCart(productId: string, token: string): Promise<Cart> {
+  const res = await fetch(`${API_URL}/cart/items/${productId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const json: ApiSuccessResponse<Cart> | ApiErrorResponse = await res.json();
+  if (!json.success) throw new Error(json.error.message);
+  return json.data;
+}
