@@ -1,5 +1,5 @@
 import { productRepository } from "../repositories/product.repository";
-import { CreateProductInput, UpdateProductInput } from "../types/product.types";
+import { CreateProductInput, UpdateProductInput } from "../schemas/product.schema";
 
 class AppError extends Error {
   constructor(public statusCode: number, public code: string, message: string) {

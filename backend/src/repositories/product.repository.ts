@@ -1,6 +1,6 @@
 import { pool } from "../config/database";
-import { Product, CreateProductInput, UpdateProductInput } from "../types/product.types";
-
+import { Product } from "../types/product.types";
+import { CreateProductInput, UpdateProductInput } from "../schemas/product.schema";
 // نگاشت یک Row خام از دیتابیس (snake_case) به شیء Product (camelCase)
 function mapRowToProduct(row: any): Product {
   return {
