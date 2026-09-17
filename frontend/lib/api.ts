@@ -14,7 +14,7 @@ interface ApiErrorResponse {
 
 export async function getProducts(): Promise<Product[]> {
   const res = await fetch(`${API_URL}/products`, {
-    cache: "no-store", // فعلاً همیشه داده‌ی تازه بگیر؛ در فازهای بعد درباره‌ی Caching بیشتر صحبت می‌کنیم
+    cache: "no-store",
   });
 
   if (!res.ok) {
@@ -22,6 +22,28 @@ export async function getProducts(): Promise<Product[]> {
   }
 
   const json: ApiSuccessResponse<Product[]> | ApiErrorResponse = await res.json();
+
+  if (!json.success) {
+    throw new Error(json.error.message);
+  }
+
+  return json.data;
+}
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const res = await fetch(`${API_URL}/products/slug/${slug}`, {
+    cache: "no-store",
+  });
+
+  if (res.status === 404) {
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch product");
+  }
+
+  const json: ApiSuccessResponse<Product> | ApiErrorResponse = await res.json();
 
   if (!json.success) {
     throw new Error(json.error.message);

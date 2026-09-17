@@ -58,9 +58,18 @@ async function deleteProduct(id: string, user: JwtPayload) {
   await productRepository.remove(id);
 }
 
+async function getProductBySlug(slug: string) {
+  const product = await productRepository.findBySlug(slug);
+  if (!product) {
+    throw new AppError(404, "PRODUCT_NOT_FOUND", "Product not found");
+  }
+  return product;
+}
+
 export const productService = {
   getAllProducts,
   getProductById,
+  getProductBySlug,
   createProduct,
   updateProduct,
   deleteProduct,

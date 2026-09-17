@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
+import { ParamsDictionary } from "express-serve-static-core";
 import { productService, AppError } from "../services/product.service";
 
-interface ProductIdParams {
+interface ProductIdParams extends ParamsDictionary {
   id: string;
 }
 
@@ -60,9 +61,19 @@ function handleError(err: unknown, res: Response) {
   });
 }
 
+async function getBySlug(req: Request<{ slug: string }>, res: Response) {
+  try {
+    const product = await productService.getProductBySlug(req.params.slug);
+    res.status(200).json({ success: true, data: product });
+  } catch (err) {
+    handleError(err, res);
+  }
+}
+
 export const productController = {
   getAll,
   getOne,
+  getBySlug,
   create,
   update,
   remove,

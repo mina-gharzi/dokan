@@ -10,6 +10,7 @@ const router = Router();
 // عمومی — نیازی به Login ندارد
 router.get("/", productController.getAll);
 router.get("/:id", productController.getOne);
+router.get("/slug/:slug", productController.getBySlug);
 
 // فقط SELLER یا ADMIN می‌توانند محصول بسازند
 router.post(
