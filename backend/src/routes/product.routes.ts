@@ -4,6 +4,7 @@ import { validate } from "../middleware/validate";
 import { authenticate } from "../middleware/authenticate";
 import { authorize } from "../middleware/authorize";
 import { createProductSchema, updateProductSchema } from "../schemas/product.schema";
+import reviewRoutes from "./review.routes";
 
 const router = Router();
 
@@ -37,5 +38,5 @@ router.delete(
   authorize("SELLER", "ADMIN"),
   productController.remove
 );
-
+router.use("/:productId/reviews", reviewRoutes);
 export default router;
