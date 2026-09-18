@@ -93,24 +93,35 @@ async function findOrdersByCustomerId(customerId: string): Promise<Order[]> {
     [customerId]
   );
 
-  const orders: Order[] = [];
-  for (const row of ordersResult.rows) {
-    const itemsResult = await pool.query(
-      `SELECT oi.id, oi.product_id, oi.quantity, oi.price_at_purchase, p.title
-       FROM order_items oi
-       JOIN products p ON p.id = oi.product_id
-       WHERE oi.order_id = $1`,
-      [row.id]
-    );
-    orders.push({
-      ...mapRowToOrder(row),
-      items: itemsResult.rows.map(mapRowToOrderItem),
-    });
+  if (ordersResult.rows.length === 0) {
+    return [];
   }
 
-  return orders;
-}
+  const orderIds = ordersResult.rows.map((row) => row.id);
 
+  // یک Query واحد برای گرفتن آیتم‌های همه‌ی سفارش‌ها با هم
+  const itemsResult = await pool.query(
+    `SELECT oi.id, oi.order_id, oi.product_id, oi.quantity, oi.price_at_purchase, p.title
+     FROM order_items oi
+     JOIN products p ON p.id = oi.product_id
+     WHERE oi.order_id = ANY($1)`,
+    [orderIds]
+  );
+
+  // گروه‌بندی آیتم‌ها بر اساس order_id در جاوااسکریپت (سریع، چون در حافظه است)
+  const itemsByOrderId = new Map<string, OrderItem[]>();
+  for (const row of itemsResult.rows) {
+    const item = mapRowToOrderItem(row);
+    const existing = itemsByOrderId.get(row.order_id) ?? [];
+    existing.push(item);
+    itemsByOrderId.set(row.order_id, existing);
+  }
+
+  return ordersResult.rows.map((row) => ({
+    ...mapRowToOrder(row),
+    items: itemsByOrderId.get(row.id) ?? [],
+  }));
+}
 
 async function findAllOrders(limit: number, offset: number) {
   const result = await pool.query(
