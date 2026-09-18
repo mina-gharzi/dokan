@@ -111,6 +111,33 @@ async function findOrdersByCustomerId(customerId: string): Promise<Order[]> {
   return orders;
 }
 
+
+async function findAllOrders(limit: number, offset: number) {
+  const result = await pool.query(
+    `SELECT o.*, u.name as customer_name, u.email as customer_email
+     FROM orders o
+     JOIN users u ON u.id = o.customer_id
+     ORDER BY o.created_at DESC
+     LIMIT $1 OFFSET $2`,
+    [limit, offset]
+  );
+  return result.rows;
+}
+
+async function countAllOrders(): Promise<number> {
+  const result = await pool.query("SELECT COUNT(*) FROM orders");
+  return Number(result.rows[0].count);
+}
+
+async function updateStatus(orderId: string, status: string) {
+  const result = await pool.query(
+    "UPDATE orders SET status = $1, updated_at = now() WHERE id = $2 RETURNING *",
+    [status, orderId]
+  );
+  return result.rows[0];
+}
+
+
 export const orderRepository = {
   lockProductForUpdate,
   decrementStock,
@@ -119,4 +146,7 @@ export const orderRepository = {
   clearCartItems,
   findOrderById,
   findOrdersByCustomerId,
+  findAllOrders,
+  countAllOrders,
+  updateStatus,
 };

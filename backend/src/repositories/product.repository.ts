@@ -1,6 +1,8 @@
 import { pool } from "../config/database";
 import { Product, CreateProductRepositoryInput } from "../types/product.types";
 import { UpdateProductInput } from "../schemas/product.schema";
+import { ProductFilters, PaginatedProducts } from "../types/product.types";
+
 // نگاشت یک Row خام از دیتابیس (snake_case) به شیء Product (camelCase)
 function mapRowToProduct(row: any): Product {
   return {
@@ -18,9 +20,63 @@ function mapRowToProduct(row: any): Product {
   };
 }
 
-async function findAll(): Promise<Product[]> {
-  const result = await pool.query("SELECT * FROM products ORDER BY created_at DESC");
-  return result.rows.map(mapRowToProduct);
+const SORT_MAP: Record<string, string> = {
+  price_asc: "price ASC",
+  price_desc: "price DESC",
+  newest: "created_at DESC",
+  oldest: "created_at ASC",
+};
+
+async function findAll(filters: ProductFilters): Promise<PaginatedProducts> {
+  const conditions: string[] = [];
+  const values: unknown[] = [];
+  let paramIndex = 1;
+
+  if (filters.search) {
+    conditions.push(`title ILIKE $${paramIndex}`);
+    values.push(`%${filters.search}%`);
+    paramIndex++;
+  }
+
+  if (filters.categoryId) {
+    conditions.push(`category_id = $${paramIndex}`);
+    values.push(filters.categoryId);
+    paramIndex++;
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const orderClause = `ORDER BY ${SORT_MAP[filters.sort ?? "newest"]}`;
+
+  const offset = (filters.page - 1) * filters.limit;
+
+  // Query اصلی: داده‌ی همین صفحه
+  const dataQuery = `
+    SELECT * FROM products
+    ${whereClause}
+    ${orderClause}
+    LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+  `;
+  const dataValues = [...values, filters.limit, offset];
+
+  // Query دوم: تعداد کل رکوردهای منطبق (بدون LIMIT/OFFSET) — برای محاسبه‌ی totalPages
+  const countQuery = `SELECT COUNT(*) FROM products ${whereClause}`;
+
+  const [dataResult, countResult] = await Promise.all([
+    pool.query(dataQuery, dataValues),
+    pool.query(countQuery, values),
+  ]);
+
+  const total = Number(countResult.rows[0].count);
+
+  return {
+    data: dataResult.rows.map(mapRowToProduct),
+    pagination: {
+      page: filters.page,
+      limit: filters.limit,
+      total,
+      totalPages: Math.ceil(total / filters.limit),
+    },
+  };
 }
 
 async function findById(id: string): Promise<Product | undefined> {

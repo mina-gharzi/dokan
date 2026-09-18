@@ -17,3 +17,24 @@ export interface Product {
 export interface CreateProductRepositoryInput extends CreateProductInput {
   sellerId: string;
 }
+
+
+export type ProductSort = "price_asc" | "price_desc" | "newest" | "oldest";
+
+export interface ProductFilters {
+  search?: string;
+  categoryId?: string;
+  sort?: ProductSort;
+  page: number;
+  limit: number;
+}
+
+export interface PaginatedProducts {
+  data: Product[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

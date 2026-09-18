@@ -7,8 +7,15 @@ interface ProductIdParams extends ParamsDictionary {
 }
 
 async function getAll(req: Request, res: Response) {
-  const products = await productService.getAllProducts();
-  res.status(200).json({ success: true, data: products });
+  const result = await productService.getAllProducts({
+    search: req.query.search as string | undefined,
+    categoryId: req.query.category as string | undefined,
+    sort: req.query.sort as string | undefined,
+    page: req.query.page as string | undefined,
+    limit: req.query.limit as string | undefined,
+  });
+
+  res.status(200).json({ success: true, ...result });
 }
 
 async function getOne(req: Request<ProductIdParams>, res: Response) {

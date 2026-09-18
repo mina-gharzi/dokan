@@ -1,22 +1,39 @@
 import { getProducts } from "@/lib/api";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductFilters } from "@/components/ProductFilters";
+import { Pagination } from "@/components/Pagination";
 
-export default async function ProductsPage() {
-  const products = await getProducts();
+interface ProductsPageProps {
+  searchParams: Promise<{ search?: string; category?: string; sort?: string; page?: string }>;
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const params = await searchParams;
+
+  const result = await getProducts({
+    search: params.search,
+    category: params.category,
+    sort: params.sort,
+    page: params.page ? Number(params.page) : 1,
+  });
 
   return (
     <main className="min-h-screen px-4 py-10 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">All Products</h1>
 
-      {products.length === 0 ? (
+      <ProductFilters />
+
+      {result.data.length === 0 ? (
         <p className="text-gray-500">No products found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product) => (
+          {result.data.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
+
+      <Pagination currentPage={result.pagination.page} totalPages={result.pagination.totalPages} />
     </main>
   );
 }

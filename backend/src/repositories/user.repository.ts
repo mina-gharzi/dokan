@@ -38,8 +38,34 @@ async function create(input: {
   return mapRowToUser(result.rows[0]);
 }
 
+async function findAll(limit: number, offset: number) {
+  const result = await pool.query(
+    `SELECT id, name, email, role, created_at FROM users
+     ORDER BY created_at DESC
+     LIMIT $1 OFFSET $2`,
+    [limit, offset]
+  );
+  return result.rows;
+}
+
+async function countAll(): Promise<number> {
+  const result = await pool.query("SELECT COUNT(*) FROM users");
+  return Number(result.rows[0].count);
+}
+
+async function updateRole(userId: string, role: string) {
+  const result = await pool.query(
+    "UPDATE users SET role = $1, updated_at = now() WHERE id = $2 RETURNING id, name, email, role",
+    [role, userId]
+  );
+  return result.rows[0];
+}
+
 export const userRepository = {
   findByEmail,
   findById,
   create,
+  findAll,
+  countAll,
+  updateRole,
 };
