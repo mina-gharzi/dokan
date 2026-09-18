@@ -2,12 +2,20 @@ import { getProducts } from "@/lib/api";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductFilters } from "@/components/ProductFilters";
 import { Pagination } from "@/components/Pagination";
+import { EmptyState } from "@/components/EmptyState";
 
 interface ProductsPageProps {
-  searchParams: Promise<{ search?: string; category?: string; sort?: string; page?: string }>;
+  searchParams: Promise<{
+    search?: string;
+    category?: string;
+    sort?: string;
+    page?: string;
+  }>;
 }
 
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({
+  searchParams,
+}: ProductsPageProps) {
   const params = await searchParams;
 
   const result = await getProducts({
@@ -24,7 +32,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <ProductFilters />
 
       {result.data.length === 0 ? (
-        <p className="text-gray-500">No products found.</p>
+        <EmptyState
+          title="No products found"
+          description="Try adjusting your search or filters."
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {result.data.map((product) => (
@@ -33,7 +44,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </div>
       )}
 
-      <Pagination currentPage={result.pagination.page} totalPages={result.pagination.totalPages} />
+      <Pagination
+        currentPage={result.pagination.page}
+        totalPages={result.pagination.totalPages}
+      />
     </main>
   );
 }
