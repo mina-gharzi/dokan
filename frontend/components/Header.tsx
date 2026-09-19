@@ -59,12 +59,20 @@ export function Header() {
               </button>
             </>
           ) : (
-            <Link
-              href="/login"
-              className="text-sm bg-blue-600 text-white rounded-md px-3 py-1.5 hover:bg-blue-700"
-            >
-              ورود
-            </Link>
+            <>
+              <Link
+                href="/register"
+                className="text-sm text-gray-700 hover:text-blue-600 hidden sm:inline"
+              >
+                ثبت‌نام
+              </Link>
+              <Link
+                href="/login"
+                className="text-sm bg-blue-600 text-white rounded-md px-3 py-1.5 hover:bg-blue-700"
+              >
+                ورود
+              </Link>
+            </>
           )}
         </div>
       </div>
