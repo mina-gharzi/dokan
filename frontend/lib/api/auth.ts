@@ -33,8 +33,14 @@ export async function registerUser(name: string, email: string, password: string
   return parseApiResponse<AuthResponse>(res);
 }
 
-export async function getCurrentUser(): Promise<AuthUser> {
+export async function getCurrentUser(): Promise<AuthUser | null> {
   const res = await fetch(`${API_URL}/auth/me`, { ...withCredentials, cache: "no-store" });
+
+  // ۴۰۱ اینجا یعنی «کاربر مهمونه»، نه یه خطای واقعی — پس throw نمی‌کنیم
+  if (res.status === 401) {
+    return null;
+  }
+
   const { user } = await parseApiResponse<AuthResponse>(res);
   return user;
 }

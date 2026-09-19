@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { createProduct } from "@/lib/api";
+import { createProduct, uploadImage } from "@/lib/api";
 
 export default function NewProductPage() {
   const { user, isLoading } = useAuth();
@@ -16,6 +16,10 @@ export default function NewProductPage() {
   const [categoryId, setCategoryId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   // Loading اولیه: هنوز نمی‌دانیم کاربر Login کرده یا نه
   if (isLoading) {
@@ -31,24 +35,43 @@ export default function NewProductPage() {
     );
   }
 
+  function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
     try {
+      let imageUrl: string | undefined;
+
+      // اول عکس رو آپلود می‌کنیم (اگه انتخاب شده باشه)، بعد با URL برگشتی محصول رو می‌سازیم
+      if (imageFile) {
+        setIsUploadingImage(true);
+        imageUrl = await uploadImage(imageFile);
+        setIsUploadingImage(false);
+      }
+
       await createProduct({
         title,
         slug,
         price: Number(price),
         stock: Number(stock),
         categoryId,
+        image: imageUrl,
       });
       router.push("/products");
     } catch (err) {
       setError(err instanceof Error ? err.message : "مشکلی پیش اومد");
     } finally {
       setIsSubmitting(false);
+      setIsUploadingImage(false);
     }
   }
 
@@ -62,6 +85,25 @@ export default function NewProductPage() {
             {error}
           </p>
         )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">عکس محصول</label>
+          {imagePreview && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imagePreview}
+              alt="پیش‌نمایش عکس محصول"
+              className="w-full h-40 object-cover rounded-md border mb-2"
+            />
+          )}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleImageChange}
+            className="w-full text-sm"
+          />
+          <p className="text-xs text-gray-400 mt-1">JPEG، PNG یا WebP، حداکثر ۵ مگابایت</p>
+        </div>
 
         <input
           placeholder="عنوان"
@@ -106,7 +148,11 @@ export default function NewProductPage() {
           disabled={isSubmitting}
           className="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 disabled:opacity-50"
         >
-          {isSubmitting ? "در حال ثبت..." : "ثبت محصول"}
+          {isUploadingImage
+            ? "در حال آپلود عکس..."
+            : isSubmitting
+            ? "در حال ثبت..."
+            : "ثبت محصول"}
         </button>
       </form>
     </main>

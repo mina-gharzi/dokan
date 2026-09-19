@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes";
 import cartRoutes from "./routes/cart.routes";
 import orderRoutes from "./routes/order.routes";
 import adminRoutes from "./routes/admin.routes";
+import uploadRoutes from "./routes/upload.routes";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import { generalLimiter, authLimiter } from "./middleware/rateLimiter";
 
@@ -46,6 +47,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/uploads", uploadRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

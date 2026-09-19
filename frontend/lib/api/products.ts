@@ -24,7 +24,14 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 }
 
 export async function createProduct(
-  input: { title: string; slug: string; price: number; stock: number; categoryId: string }
+  input: {
+    title: string;
+    slug: string;
+    price: number;
+    stock: number;
+    categoryId: string;
+    image?: string;
+  }
 ): Promise<Product> {
   const res = await fetch(`${API_URL}/products`, {
     method: "POST",

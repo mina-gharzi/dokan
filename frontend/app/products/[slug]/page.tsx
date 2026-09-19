@@ -29,6 +29,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   return (
     <main className="min-h-screen px-4 py-10 max-w-3xl mx-auto">
+      {product.image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={product.image}
+          alt={product.title}
+          className="w-full max-h-96 object-cover rounded-lg border mb-6"
+        />
+      )}
+
       <h1 className="text-3xl font-bold text-gray-900">{product.title}</h1>
       <p className="text-2xl text-gray-700 mt-2">{product.price} تومان</p>
 
