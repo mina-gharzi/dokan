@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getCart, updateCartItem, removeFromCart, checkout, Cart } from "@/lib/api";
 
 export default function CartPage() {
-  const { token, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const [cart, setCart] = useState<Cart | null>(null);
@@ -16,34 +16,31 @@ export default function CartPage() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) {
+    if (!user) {
       setIsLoading(false);
       return;
     }
-    getCart(token)
+    getCart()
       .then(setCart)
       .finally(() => setIsLoading(false));
-  }, [token]);
+  }, [user]);
 
   async function handleQuantityChange(productId: string, quantity: number) {
-    if (!token) return;
-    const updated = await updateCartItem(productId, quantity, token);
+    const updated = await updateCartItem(productId, quantity);
     setCart(updated);
   }
 
   async function handleRemove(productId: string) {
-    if (!token) return;
-    const updated = await removeFromCart(productId, token);
+    const updated = await removeFromCart(productId);
     setCart(updated);
   }
 
   async function handleCheckout() {
-    if (!token) return;
     setIsCheckingOut(true);
     setCheckoutError(null);
 
     try {
-      const order = await checkout(token);
+      const order = await checkout();
       router.push(`/orders/${order.id}`);
     } catch (err) {
       setCheckoutError(err instanceof Error ? err.message : "Checkout failed");
@@ -56,7 +53,7 @@ export default function CartPage() {
     return <p className="text-center py-10">Loading...</p>;
   }
 
-  if (!token) {
+  if (!user) {
     return <p className="text-center py-10">Please log in to view your cart.</p>;
   }
 

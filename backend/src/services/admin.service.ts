@@ -1,6 +1,6 @@
 import { userRepository } from "../repositories/user.repository";
 import { orderRepository } from "../repositories/order.repository";
-import { AppError } from "./product.service";
+import { AppError } from "../utils/AppError";
 
 const VALID_ROLES = ["CUSTOMER", "SELLER", "ADMIN"];
 

@@ -1,4 +1,4 @@
-import { API_URL, parseApiResponse, authHeaders } from "./client";
+import { API_URL, parseApiResponse, withCredentials } from "./client";
 
 export interface OrderItem {
   id: string;
@@ -18,26 +18,26 @@ export interface Order {
   updatedAt: string;
 }
 
-export async function checkout(token: string): Promise<Order> {
+export async function checkout(): Promise<Order> {
   const res = await fetch(`${API_URL}/orders/checkout`, {
     method: "POST",
-    headers: authHeaders(token),
+    ...withCredentials,
   });
   return parseApiResponse<Order>(res);
 }
 
-export async function getMyOrders(token: string): Promise<Order[]> {
+export async function getMyOrders(): Promise<Order[]> {
   const res = await fetch(`${API_URL}/orders`, {
-    headers: authHeaders(token),
     cache: "no-store",
+    ...withCredentials,
   });
   return parseApiResponse<Order[]>(res);
 }
 
-export async function getOrderById(id: string, token: string): Promise<Order> {
+export async function getOrderById(id: string): Promise<Order> {
   const res = await fetch(`${API_URL}/orders/${id}`, {
-    headers: authHeaders(token),
     cache: "no-store",
+    ...withCredentials,
   });
   return parseApiResponse<Order>(res);
 }

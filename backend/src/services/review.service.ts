@@ -1,6 +1,6 @@
 import { reviewRepository } from "../repositories/review.repository";
 import { productRepository } from "../repositories/product.repository";
-import { AppError } from "./product.service";
+import { AppError } from "../utils/AppError";
 import { CreateReviewInput } from "../schemas/review.schema";
 
 async function getProductReviews(productId: string) {

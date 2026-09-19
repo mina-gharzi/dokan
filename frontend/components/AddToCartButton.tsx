@@ -6,13 +6,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { addToCart } from "@/lib/api";
 
 export function AddToCartButton({ productId }: { productId: string }) {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   async function handleClick() {
-    if (!user || !token) {
+    if (!user) {
       router.push("/login");
       return;
     }
@@ -21,7 +21,7 @@ export function AddToCartButton({ productId }: { productId: string }) {
     setMessage(null);
 
     try {
-      await addToCart(productId, 1, token);
+      await addToCart(productId, 1);
       setMessage("Added to cart!");
     } catch (err) {
       setMessage(err instanceof Error ? err.message : "Failed to add to cart");

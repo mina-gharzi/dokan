@@ -1,13 +1,12 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { AuthUser } from "@/lib/api";
+import { AuthUser, getCurrentUser, logoutUser } from "@/lib/api";
 
 interface AuthContextType {
   user: AuthUser | null;
-  token: string | null;
-  login: (user: AuthUser, token: string) => void;
-  logout: () => void;
+  login: (user: AuthUser) => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -15,38 +14,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // موقع بار اول لود شدن اپ، ببین آیا قبلاً Login کرده بودیم (از localStorage)
+  // موقع بار اول لود شدن اپ، دیگر localStorage نمی‌خوانیم — کوکی httpOnly را خود مرورگر
+  // می‌فرستد، پس فقط از بک‌اند می‌پرسیم "الان کی لاگین است؟"
   useEffect(() => {
-    const storedToken = localStorage.getItem("dokan_token");
-    const storedUser = localStorage.getItem("dokan_user");
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-
-    setIsLoading(false);
+    getCurrentUser()
+      .then((currentUser) => setUser(currentUser))
+      .catch(() => setUser(null))
+      .finally(() => setIsLoading(false));
   }, []);
 
-  function login(newUser: AuthUser, newToken: string) {
-    localStorage.setItem("dokan_token", newToken);
-    localStorage.setItem("dokan_user", JSON.stringify(newUser));
+  function login(newUser: AuthUser) {
     setUser(newUser);
-    setToken(newToken);
   }
 
   function logout() {
-    localStorage.removeItem("dokan_token");
-    localStorage.removeItem("dokan_user");
-    setUser(null);
-    setToken(null);
+    return logoutUser().finally(() => setUser(null));
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

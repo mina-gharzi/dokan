@@ -1,4 +1,4 @@
-import { API_URL, parseApiResponse, authHeaders } from "./client";
+import { API_URL, parseApiResponse, withCredentials } from "./client";
 
 export interface Review {
   id: string;
@@ -24,13 +24,13 @@ export async function getProductReviews(productId: string): Promise<ProductRevie
 export async function createReview(
   productId: string,
   rating: number,
-  comment: string | undefined,
-  token: string
+  comment: string | undefined
 ): Promise<Review> {
   const res = await fetch(`${API_URL}/products/${productId}/reviews`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ rating, comment }),
+    ...withCredentials,
   });
   return parseApiResponse<Review>(res);
 }

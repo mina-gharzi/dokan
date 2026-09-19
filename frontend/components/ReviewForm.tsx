@@ -5,13 +5,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createReview } from "@/lib/api";
 
 export function ReviewForm({ productId, onSuccess }: { productId: string; onSuccess: () => void }) {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!user || !token) {
+  if (!user) {
     return <p className="text-sm text-gray-500">Please log in to leave a review.</p>;
   }
 
@@ -21,7 +21,7 @@ export function ReviewForm({ productId, onSuccess }: { productId: string; onSucc
     setIsSubmitting(true);
 
     try {
-      await createReview(productId, rating, comment || undefined, token!);
+      await createReview(productId, rating, comment || undefined);
       setComment("");
       onSuccess();
     } catch (err) {

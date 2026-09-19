@@ -23,6 +23,5 @@ export async function parseApiResponse<T>(res: Response): Promise<T> {
   return json.data;
 }
 
-export function authHeaders(token: string) {
-  return { Authorization: `Bearer ${token}` };
-}
+// توکن دیگر دست‌ما نیست (در httpOnly Cookie است)؛ مرورگر خودش با credentials: "include" آن را می‌فرستد
+export const withCredentials: RequestInit = { credentials: "include" };

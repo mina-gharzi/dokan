@@ -2,16 +2,14 @@ import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt";
 
 export function authenticate(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.token;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return res.status(401).json({
       success: false,
       error: { code: "UNAUTHORIZED", message: "No token provided" },
     });
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const payload = verifyToken(token);

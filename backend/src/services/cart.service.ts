@@ -1,12 +1,7 @@
 import { cartRepository } from "../repositories/cart.repository";
 import { productRepository } from "../repositories/product.repository";
 import { CartWithItems } from "../types/cart.types";
-
-class AppError extends Error {
-  constructor(public statusCode: number, public code: string, message: string) {
-    super(message);
-  }
-}
+import { AppError } from "../utils/AppError";
 
 function calculateTotal(items: { productPrice: number; quantity: number }[]): number {
   return items.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
@@ -77,5 +72,3 @@ export const cartService = {
   updateCartItem,
   removeFromCart,
 };
-
-export { AppError };

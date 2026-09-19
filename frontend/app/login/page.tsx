@@ -20,8 +20,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const { user, token } = await loginUser(email, password);
-      login(user, token);
+      const { user } = await loginUser(email, password);
+      login(user);
       router.push("/seller/products/new");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

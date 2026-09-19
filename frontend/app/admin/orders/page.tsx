@@ -7,24 +7,23 @@ import { getAdminOrders, updateOrderStatus, AdminOrder } from "@/lib/api";
 const STATUS_OPTIONS = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
 
 export default function AdminOrdersPage() {
-  const { token } = useAuth();
+  const { user } = useAuth();
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) return;
-    getAdminOrders(token).then((res) => {
+    if (!user) return;
+    getAdminOrders().then((res) => {
       setOrders(res.data);
       setIsLoading(false);
     });
-  }, [token]);
+  }, [user]);
 
   async function handleStatusChange(orderId: string, newStatus: string) {
-    if (!token) return;
     setError(null);
     try {
-      await updateOrderStatus(orderId, newStatus, token);
+      await updateOrderStatus(orderId, newStatus);
       setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update status");

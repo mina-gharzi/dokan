@@ -5,21 +5,20 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getAdminUsers, updateUserRole, AdminUser } from "@/lib/api";
 
 export default function AdminUsersPage() {
-  const { token } = useAuth();
+  const { user } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!token) return;
-    getAdminUsers(token).then((res) => {
+    if (!user) return;
+    getAdminUsers().then((res) => {
       setUsers(res.data);
       setIsLoading(false);
     });
-  }, [token]);
+  }, [user]);
 
   async function handleRoleChange(userId: string, newRole: string) {
-    if (!token) return;
-    await updateUserRole(userId, newRole, token);
+    await updateUserRole(userId, newRole);
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
   }
 

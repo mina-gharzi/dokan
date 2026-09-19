@@ -7,19 +7,19 @@ import { getOrderById, Order } from "@/lib/api";
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { token, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!token) {
+    if (!user) {
       setIsLoading(false);
       return;
     }
-    getOrderById(id, token)
+    getOrderById(id)
       .then(setOrder)
       .finally(() => setIsLoading(false));
-  }, [id, token]);
+  }, [id, user]);
 
   if (authLoading || isLoading) return <p className="text-center py-10">Loading...</p>;
   if (!order) return <p className="text-center py-10">Order not found.</p>;

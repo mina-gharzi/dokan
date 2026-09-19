@@ -4,11 +4,7 @@ import { signToken } from "../utils/jwt";
 import { RegisterInput, LoginInput } from "../schemas/auth.schema";
 import { SafeUser } from "../types/user.types";
 
-class AppError extends Error {
-  constructor(public statusCode: number, public code: string, message: string) {
-    super(message);
-  }
-}
+import { AppError } from "../utils/AppError";
 
 function toSafeUser(user: {
   id: string;
@@ -64,9 +60,16 @@ async function login(input: LoginInput) {
   return { user: toSafeUser(user), token };
 }
 
+async function getCurrentUser(userId: string) {
+  const user = await userRepository.findById(userId);
+  if (!user) {
+    throw new AppError(404, "USER_NOT_FOUND", "User not found");
+  }
+  return toSafeUser(user);
+}
+
 export const authService = {
   register,
   login,
+  getCurrentUser,
 };
-
-export { AppError };

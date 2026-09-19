@@ -1,39 +1,67 @@
+import Link from "next/link";
 import { getProducts } from "@/lib/api";
+import { ProductCard } from "@/components/ProductCard";
+import { EmptyState } from "@/components/EmptyState";
 
 export default async function HomePage() {
-  const response = await getProducts();
-  const products = response.data;
+  const result = await getProducts({ sort: "newest" });
+  const featured = result.data.slice(0, 6);
 
   return (
-    <main className="min-h-screen px-4 py-10 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
-        Dokan Products
-      </h1>
+    <main className="min-h-screen">
+      <section className="max-w-5xl mx-auto px-4 pt-16 pb-12">
+        <h1 className="text-4xl font-bold text-gray-900 max-w-xl">
+          A marketplace built for independent sellers.
+        </h1>
+        <p className="text-lg text-gray-600 mt-4 max-w-md">
+          Dokan connects shoppers with independent sellers in one storefront —
+          browse, buy, and track every order in one place.
+        </p>
 
-      {products.length === 0 ? (
-        <p className="text-gray-500">No products found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="border rounded-lg p-4 shadow-sm"
-            >
-              <h2 className="font-semibold text-lg text-gray-900">
-                {product.title}
-              </h2>
-
-              <p className="text-gray-500 text-sm mt-1">
-                ${product.price}
-              </p>
-
-              <p className="text-gray-400 text-xs mt-1">
-                Stock: {product.stock}
-              </p>
-            </div>
-          ))}
+        <div className="flex items-center gap-4 mt-8">
+          <Link
+            href="/products"
+            className="bg-blue-600 text-white rounded-md px-5 py-2.5 text-sm font-medium hover:bg-blue-700"
+          >
+            Browse products
+          </Link>
+          <Link
+            href="/seller/products/new"
+            className="text-sm font-medium text-gray-700 hover:text-blue-600"
+          >
+            Sell on Dokan →
+          </Link>
         </div>
-      )}
+
+        <div className="flex gap-10 mt-12 pt-8 border-t">
+          <div>
+            <p className="text-2xl font-bold text-gray-900">{result.pagination.total}</p>
+            <p className="text-sm text-gray-500 mt-1">Products listed</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-5xl mx-auto px-4 pb-16">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Newest listings</h2>
+          <Link href="/products" className="text-sm text-blue-600 hover:underline">
+            View all
+          </Link>
+        </div>
+
+        {featured.length === 0 ? (
+          <EmptyState
+            title="No products yet"
+            description="Once sellers list products, they'll show up here."
+          />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {featured.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

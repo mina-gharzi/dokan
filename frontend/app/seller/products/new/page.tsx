@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createProduct } from "@/lib/api";
 
 export default function NewProductPage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -23,7 +23,7 @@ export default function NewProductPage() {
   }
 
   // Protected Route ساده در سطح UX (نه امنیت واقعی — آن در Backend است)
-  if (!user || !token || (user.role !== "SELLER" && user.role !== "ADMIN")) {
+  if (!user || (user.role !== "SELLER" && user.role !== "ADMIN")) {
     return (
       <main className="min-h-screen flex items-center justify-center px-4">
         <p className="text-gray-600">You must be logged in as a Seller to access this page.</p>
@@ -37,16 +37,13 @@ export default function NewProductPage() {
     setIsSubmitting(true);
 
     try {
-      await createProduct(
-        {
-          title,
-          slug,
-          price: Number(price),
-          stock: Number(stock),
-          categoryId,
-        },
-        token!
-      );
+      await createProduct({
+        title,
+        slug,
+        price: Number(price),
+        stock: Number(stock),
+        categoryId,
+      });
       router.push("/products");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

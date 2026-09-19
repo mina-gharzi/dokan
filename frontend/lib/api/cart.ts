@@ -1,4 +1,4 @@
-import { API_URL, parseApiResponse, authHeaders } from "./client";
+import { API_URL, parseApiResponse, withCredentials } from "./client";
 
 export interface CartItem {
   id: string;
@@ -18,36 +18,38 @@ export interface Cart {
   total: number;
 }
 
-export async function getCart(token: string): Promise<Cart> {
+export async function getCart(): Promise<Cart> {
   const res = await fetch(`${API_URL}/cart`, {
-    headers: authHeaders(token),
     cache: "no-store",
+    ...withCredentials,
   });
   return parseApiResponse<Cart>(res);
 }
 
-export async function addToCart(productId: string, quantity: number, token: string): Promise<Cart> {
+export async function addToCart(productId: string, quantity: number): Promise<Cart> {
   const res = await fetch(`${API_URL}/cart/items`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ productId, quantity }),
+    ...withCredentials,
   });
   return parseApiResponse<Cart>(res);
 }
 
-export async function updateCartItem(productId: string, quantity: number, token: string): Promise<Cart> {
+export async function updateCartItem(productId: string, quantity: number): Promise<Cart> {
   const res = await fetch(`${API_URL}/cart/items/${productId}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ quantity }),
+    ...withCredentials,
   });
   return parseApiResponse<Cart>(res);
 }
 
-export async function removeFromCart(productId: string, token: string): Promise<Cart> {
+export async function removeFromCart(productId: string): Promise<Cart> {
   const res = await fetch(`${API_URL}/cart/items/${productId}`, {
     method: "DELETE",
-    headers: authHeaders(token),
+    ...withCredentials,
   });
   return parseApiResponse<Cart>(res);
 }

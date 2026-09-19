@@ -1,4 +1,4 @@
-import { API_URL, parseApiResponse } from "./client";
+import { API_URL, parseApiResponse, withCredentials } from "./client";
 import { Product } from "@/types/product";
 
 export async function getProducts(filters: ProductFilters = {}): Promise<PaginatedProducts> {
@@ -24,13 +24,13 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 }
 
 export async function createProduct(
-  input: { title: string; slug: string; price: number; stock: number; categoryId: string },
-  token: string
+  input: { title: string; slug: string; price: number; stock: number; categoryId: string }
 ): Promise<Product> {
   const res = await fetch(`${API_URL}/products`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
+    ...withCredentials,
   });
   return parseApiResponse<Product>(res);
 }
@@ -46,4 +46,3 @@ export interface PaginatedProducts {
   data: Product[];
   pagination: { page: number; limit: number; total: number; totalPages: number };
 }
-

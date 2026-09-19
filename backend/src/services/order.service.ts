@@ -1,7 +1,7 @@
 import { pool } from "../config/database";
 import { orderRepository } from "../repositories/order.repository";
 import { cartRepository } from "../repositories/cart.repository";
-import { AppError } from "./product.service";
+import { AppError } from "../utils/AppError";
 
 async function checkout(userId: string) {
   const client = await pool.connect();

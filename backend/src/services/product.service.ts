@@ -4,16 +4,7 @@ import {
   UpdateProductInput,
 } from "../schemas/product.schema";
 import { JwtPayload } from "../utils/jwt";
-
-class AppError extends Error {
-  constructor(
-    public statusCode: number,
-    public code: string,
-    message: string,
-  ) {
-    super(message);
-  }
-}
+import { AppError } from "../utils/AppError";
 
 const VALID_SORTS = ["price_asc", "price_desc", "newest", "oldest"];
 
@@ -112,5 +103,3 @@ export const productService = {
   updateProduct,
   deleteProduct,
 };
-
-export { AppError };
