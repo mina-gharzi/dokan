@@ -10,7 +10,7 @@ export function Counter() {
       onClick={() => setCount((c) => c + 1)}
       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
     >
-      Clicked {count} times
+      {count} بار کلیک شده
     </button>
   );
 }

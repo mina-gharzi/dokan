@@ -19,14 +19,14 @@ export default function NewProductPage() {
 
   // Loading اولیه: هنوز نمی‌دانیم کاربر Login کرده یا نه
   if (isLoading) {
-    return <p className="text-center py-10">Loading...</p>;
+    return <p className="text-center py-10">در حال بارگذاری...</p>;
   }
 
   // Protected Route ساده در سطح UX (نه امنیت واقعی — آن در Backend است)
   if (!user || (user.role !== "SELLER" && user.role !== "ADMIN")) {
     return (
       <main className="min-h-screen flex items-center justify-center px-4">
-        <p className="text-gray-600">You must be logged in as a Seller to access this page.</p>
+        <p className="text-gray-600">برای دسترسی به این صفحه باید به‌عنوان فروشنده وارد شده باشی.</p>
       </main>
     );
   }
@@ -46,7 +46,7 @@ export default function NewProductPage() {
       });
       router.push("/products");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "مشکلی پیش اومد");
     } finally {
       setIsSubmitting(false);
     }
@@ -54,7 +54,7 @@ export default function NewProductPage() {
 
   return (
     <main className="min-h-screen px-4 py-10 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Create a Product</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">ثبت محصول جدید</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -64,21 +64,21 @@ export default function NewProductPage() {
         )}
 
         <input
-          placeholder="Title"
+          placeholder="عنوان"
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full border rounded-md px-3 py-2"
         />
         <input
-          placeholder="Slug (e.g. gaming-mouse)"
+          placeholder="اسلاگ (مثلاً gaming-mouse)"
           required
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
           className="w-full border rounded-md px-3 py-2"
         />
         <input
-          placeholder="Price"
+          placeholder="قیمت (تومان)"
           type="number"
           required
           value={price}
@@ -86,7 +86,7 @@ export default function NewProductPage() {
           className="w-full border rounded-md px-3 py-2"
         />
         <input
-          placeholder="Stock"
+          placeholder="موجودی"
           type="number"
           required
           value={stock}
@@ -94,7 +94,7 @@ export default function NewProductPage() {
           className="w-full border rounded-md px-3 py-2"
         />
         <input
-          placeholder="Category ID (UUID)"
+          placeholder="شناسه دسته‌بندی (UUID)"
           required
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
@@ -106,7 +106,7 @@ export default function NewProductPage() {
           disabled={isSubmitting}
           className="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 disabled:opacity-50"
         >
-          {isSubmitting ? "Creating..." : "Create Product"}
+          {isSubmitting ? "در حال ثبت..." : "ثبت محصول"}
         </button>
       </form>
     </main>

@@ -43,34 +43,34 @@ export default function CartPage() {
       const order = await checkout();
       router.push(`/orders/${order.id}`);
     } catch (err) {
-      setCheckoutError(err instanceof Error ? err.message : "Checkout failed");
+      setCheckoutError(err instanceof Error ? err.message : "ثبت سفارش با خطا مواجه شد");
     } finally {
       setIsCheckingOut(false);
     }
   }
 
   if (authLoading || isLoading) {
-    return <p className="text-center py-10">Loading...</p>;
+    return <p className="text-center py-10">در حال بارگذاری...</p>;
   }
 
   if (!user) {
-    return <p className="text-center py-10">Please log in to view your cart.</p>;
+    return <p className="text-center py-10">برای مشاهده سبد خرید وارد شو.</p>;
   }
 
   if (!cart || cart.items.length === 0) {
-    return <p className="text-center py-10">Your cart is empty.</p>;
+    return <p className="text-center py-10">سبد خریدت خالیه.</p>;
   }
 
   return (
     <main className="min-h-screen px-4 py-10 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Your Cart</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">سبد خرید</h1>
 
       <div className="space-y-4">
         {cart.items.map((item) => (
           <div key={item.id} className="flex items-center justify-between border rounded-md p-4">
             <div>
               <p className="font-medium text-gray-900">{item.productTitle}</p>
-              <p className="text-sm text-gray-500">${item.productPrice} each</p>
+              <p className="text-sm text-gray-500">{item.productPrice} تومان</p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -86,19 +86,19 @@ export default function CartPage() {
                 onClick={() => handleRemove(item.productId)}
                 className="text-red-600 text-sm hover:underline"
               >
-                Remove
+                حذف
               </button>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 text-right text-xl font-bold text-gray-900">
-        Total: ${cart.total.toFixed(2)}
+      <div className="mt-6 text-end text-xl font-bold text-gray-900">
+        جمع کل: {cart.total} تومان
       </div>
 
       {checkoutError && (
-        <p className="text-sm text-red-600 mt-2 text-right">{checkoutError}</p>
+        <p className="text-sm text-red-600 mt-2 text-end">{checkoutError}</p>
       )}
 
       <button
@@ -106,7 +106,7 @@ export default function CartPage() {
         disabled={isCheckingOut}
         className="mt-4 w-full bg-green-600 text-white rounded-md py-2 hover:bg-green-700 disabled:opacity-50"
       >
-        {isCheckingOut ? "Placing order..." : "Checkout"}
+        {isCheckingOut ? "در حال ثبت سفارش..." : "ثبت سفارش"}
       </button>
     </main>
   );

@@ -2,7 +2,7 @@ import { Review } from "@/lib/api";
 
 export function ReviewList({ reviews }: { reviews: Review[] }) {
   if (reviews.length === 0) {
-    return <p className="text-gray-500 text-sm">No reviews yet.</p>;
+    return <p className="text-gray-500 text-sm">هنوز نظری ثبت نشده.</p>;
   }
 
   return (

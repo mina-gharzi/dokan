@@ -12,7 +12,7 @@ export function ReviewForm({ productId, onSuccess }: { productId: string; onSucc
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!user) {
-    return <p className="text-sm text-gray-500">Please log in to leave a review.</p>;
+    return <p className="text-sm text-gray-500">برای ثبت نظر باید وارد شوی.</p>;
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -25,7 +25,7 @@ export function ReviewForm({ productId, onSuccess }: { productId: string; onSucc
       setComment("");
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit review");
+      setError(err instanceof Error ? err.message : "ثبت نظر با خطا مواجه شد");
     } finally {
       setIsSubmitting(false);
     }
@@ -46,13 +46,13 @@ export function ReviewForm({ productId, onSuccess }: { productId: string; onSucc
       >
         {[5, 4, 3, 2, 1].map((n) => (
           <option key={n} value={n}>
-            {n} star{n > 1 ? "s" : ""}
+            {n} ستاره
           </option>
         ))}
       </select>
 
       <textarea
-        placeholder="Write your review (optional)"
+        placeholder="نظرت رو بنویس (اختیاری)"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         className="w-full border rounded-md px-3 py-2"
@@ -64,7 +64,7 @@ export function ReviewForm({ productId, onSuccess }: { productId: string; onSucc
         disabled={isSubmitting}
         className="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 disabled:opacity-50"
       >
-        {isSubmitting ? "Submitting..." : "Submit Review"}
+        {isSubmitting ? "در حال ثبت..." : "ثبت نظر"}
       </button>
     </form>
   );

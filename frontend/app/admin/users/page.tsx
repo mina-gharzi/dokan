@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAdminUsers, updateUserRole, AdminUser } from "@/lib/api";
 
+const ROLE_LABELS: Record<string, string> = {
+  CUSTOMER: "مشتری",
+  SELLER: "فروشنده",
+  ADMIN: "ادمین",
+};
+
 export default function AdminUsersPage() {
   const { user } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -22,17 +28,17 @@ export default function AdminUsersPage() {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
   }
 
-  if (isLoading) return <p className="text-center py-10">Loading users...</p>;
+  if (isLoading) return <p className="text-center py-10">در حال بارگذاری کاربران...</p>;
 
   return (
     <main className="px-4 py-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Users</h1>
+      <h1 className="text-2xl font-bold mb-6">کاربران</h1>
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left border-b">
-            <th className="py-2">Name</th>
-            <th>Email</th>
-            <th>Role</th>
+          <tr className="text-start border-b">
+            <th className="py-2">نام</th>
+            <th>ایمیل</th>
+            <th>نقش</th>
           </tr>
         </thead>
         <tbody>
@@ -46,9 +52,9 @@ export default function AdminUsersPage() {
                   onChange={(e) => handleRoleChange(u.id, e.target.value)}
                   className="border rounded px-2 py-1"
                 >
-                  <option value="CUSTOMER">CUSTOMER</option>
-                  <option value="SELLER">SELLER</option>
-                  <option value="ADMIN">ADMIN</option>
+                  <option value="CUSTOMER">{ROLE_LABELS.CUSTOMER}</option>
+                  <option value="SELLER">{ROLE_LABELS.SELLER}</option>
+                  <option value="ADMIN">{ROLE_LABELS.ADMIN}</option>
                 </select>
               </td>
             </tr>

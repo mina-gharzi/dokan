@@ -24,7 +24,7 @@ export default function LoginPage() {
       login(user);
       router.push("/seller/products/new");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "مشکلی پیش اومد");
     } finally {
       setIsSubmitting(false);
     }
@@ -33,7 +33,7 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
-        <h1 className="text-2xl font-bold text-gray-900">Login to Dokan</h1>
+        <h1 className="text-2xl font-bold text-gray-900">ورود به دکان</h1>
 
         {error && (
           <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-2">
@@ -43,7 +43,7 @@ export default function LoginPage() {
 
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
+            ایمیل
           </label>
           <input
             id="email"
@@ -57,7 +57,7 @@ export default function LoginPage() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+            رمز عبور
           </label>
           <input
             id="password"
@@ -74,7 +74,7 @@ export default function LoginPage() {
           disabled={isSubmitting}
           className="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 disabled:opacity-50"
         >
-          {isSubmitting ? "Logging in..." : "Login"}
+          {isSubmitting ? "در حال ورود..." : "ورود"}
         </button>
       </form>
     </main>

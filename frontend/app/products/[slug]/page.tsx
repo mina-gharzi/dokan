@@ -10,11 +10,11 @@ export async function generateMetadata({ params }: ProductPageProps) {
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: "Product Not Found — Dokan" };
+    return { title: "محصول پیدا نشد — دکان" };
   }
 
   return {
-    title: `${product.title} — Dokan`,
+    title: `${product.title} — دکان`,
     description: product.description ?? undefined,
   };
 }
@@ -30,7 +30,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   return (
     <main className="min-h-screen px-4 py-10 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-900">{product.title}</h1>
-      <p className="text-2xl text-gray-700 mt-2">${product.price}</p>
+      <p className="text-2xl text-gray-700 mt-2">{product.price} تومان</p>
 
       {product.description && (
         <p className="text-gray-600 mt-4">{product.description}</p>
@@ -38,9 +38,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
       <p className="text-sm mt-4">
         {product.stock > 0 ? (
-          <span className="text-green-600">{product.stock} in stock</span>
+          <span className="text-green-600">{product.stock} عدد موجود</span>
         ) : (
-          <span className="text-red-600">Out of stock</span>
+          <span className="text-red-600">ناموجود</span>
         )}
       </p>
     </main>

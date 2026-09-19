@@ -22,11 +22,11 @@ export function Pagination({ currentPage, totalPages }: { currentPage: number; t
         disabled={currentPage <= 1}
         className="px-3 py-1 border rounded-md disabled:opacity-50"
       >
-        Previous
+        قبلی
       </button>
 
       <span className="px-3 py-1 text-sm text-gray-600">
-        Page {currentPage} of {totalPages}
+        صفحه {currentPage} از {totalPages}
       </span>
 
       <button
@@ -34,7 +34,7 @@ export function Pagination({ currentPage, totalPages }: { currentPage: number; t
         disabled={currentPage >= totalPages}
         className="px-3 py-1 border rounded-md disabled:opacity-50"
       >
-        Next
+        بعدی
       </button>
     </div>
   );
