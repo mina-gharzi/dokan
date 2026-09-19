@@ -25,11 +25,18 @@ async function addToCart(userId: string, productId: string, quantity: number): P
     throw new AppError(404, "PRODUCT_NOT_FOUND", "Product not found");
   }
 
-  if (product.stock < quantity) {
+  const cartId = await cartRepository.getOrCreateCartId(userId);
+
+  // مهم: باید موجودی رو در برابر (مقدار فعلی توی سبد + مقدار جدید) چک کنیم،
+  // نه فقط مقدار جدید — وگرنه با چندبار اضافه‌کردن می‌شه از موجودی رد شد
+  const existingItem = await cartRepository.findItem(cartId, productId);
+  const currentQtyInCart = existingItem?.quantity ?? 0;
+  const desiredTotalQty = currentQtyInCart + quantity;
+
+  if (product.stock < desiredTotalQty) {
     throw new AppError(422, "INSUFFICIENT_STOCK", "Not enough stock for this product");
   }
 
-  const cartId = await cartRepository.getOrCreateCartId(userId);
   await cartRepository.addItem(cartId, productId, quantity);
 
   return getCart(userId);
